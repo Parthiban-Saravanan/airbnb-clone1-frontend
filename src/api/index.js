@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "http://airbnb-clone1-backend.onrender.com/api/",
+    baseURL: "https://airbnb-clone1-backend.onrender.com/api/",
 });
 
 // User signup and signin functions
