@@ -4,7 +4,7 @@ import { CircularProgress, Rating } from "@mui/material";
 import styled from "styled-components";
 import { FavoriteBorder, FavoriteRounded } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { addToFavorites, removeFromFavorites } from "../../redux/reducers/favoritesSlice"; 
+import { addToFavorites, removeFromFavorites } from "../../redux/reducers/favoritesSlice";
 import { openSnackbar } from "../../redux/reducers/snackbarSlice";
 
 const CardContainer = styled.div`
@@ -155,10 +155,10 @@ const PropertyCard = ({ property }) => {
     setFavoriteLoading(true);
     try {
       if (isFavorite) {
-        await removeFromFavorites({ propertyId: property?._id });
+        dispatch(removeFromFavorites({ propertyId: property?._id }));
         dispatch(openSnackbar({ message: "Removed from favorites!", severity: "success" }));
       } else {
-        await addToFavorites({ propertyId: property?._id });
+        dispatch(addToFavorites({ propertyId: property?._id }));
         dispatch(openSnackbar({ message: "Added to favorites!", severity: "success" }));
       }
     } catch (error) {
