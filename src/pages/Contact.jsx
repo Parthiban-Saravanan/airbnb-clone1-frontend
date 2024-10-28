@@ -76,13 +76,36 @@ const ServiceInfo = styled.div`
   h2 {
     font-size: 24px; /* Larger subtitle */
     color: ${({ theme }) => theme.primary}; /* Darker color for the subtitle */
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
   p {
     line-height: 1.6; /* Improved readability */
     font-size: 16px; /* Slightly larger font size */
     color: ${({ theme }) => theme.text_secondary}; /* Lighter font color */
+    margin-bottom: 10px;
+  }
+
+  ul {
+    list-style: none; /* Remove default list styling */
+    padding: 0; /* Remove default padding */
+    display: flex; /* Flexbox for horizontal layout */
+    justify-content: center; /* Center the items */
+    flex-wrap: wrap; /* Allow items to wrap */
+    gap: 20px; /* Space between items */
+  }
+
+  li {
+    background-color: ${({ theme }) => theme.primary}; /* Background color for each service */
+    color: white; /* White text for contrast */
+    border-radius: 10px; /* Rounded corners */
+    padding: 15px 20px; /* Padding for better spacing */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s; /* Transition for hover effect */
+    
+    &:hover {
+      transform: translateY(-3px); /* Lift effect on hover */
+    }
   }
 `;
 
@@ -111,10 +134,10 @@ const Contact = () => {
         <h2>Customer Service</h2>
         <p>Our dedicated customer service team is here to help you with:</p>
         <ul>
-          <li>Booking assistance and inquiries</li>
-          <li>Payment and refund support</li>
-          <li>Listing and hosting guidance</li>
-          <li>Resolving any issues or concerns</li>
+          <li><i className="fas fa-question-circle" /> Booking assistance and inquiries</li>
+          <li><i className="fas fa-credit-card" /> Payment and refund support</li>
+          <li><i className="fas fa-home" /> Listing and hosting guidance</li>
+          <li><i className="fas fa-exclamation-circle" /> Resolving any issues or concerns</li>
         </ul>
       </ServiceInfo>
     </Container>
