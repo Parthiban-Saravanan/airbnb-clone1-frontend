@@ -1,7 +1,7 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import PropertyCard from '../componnents/Cards/PropertyCard';
-import styled from 'styled-components';
+import React from "react";
+import { useSelector } from "react-redux";
+import PropertyCard from "../components/Cards/PropertyCard";
+import styled from "styled-components";
 
 const FavoritesContainer = styled.div`
   padding: 30px;
@@ -24,17 +24,15 @@ const NoFavoritesMessage = styled.p`
 `;
 
 const Favorites = () => {
-  const favorites = useSelector((state) => state.favorites.list); // Get the list of favorite properties from Redux store
+  const favorites = useSelector((state) => state.favorites.list);
 
   return (
     <FavoritesContainer>
       <FavoritesHeading>Your Favorites</FavoritesHeading>
-      {favorites && favorites.length === 0 ? (
-        <NoFavoritesMessage>You have no favorites yet!</NoFavoritesMessage>
+      {favorites && favorites.length > 0 ? (
+        favorites.map((property) => <PropertyCard key={property._id} property={property} />)
       ) : (
-        favorites.map((property) => (
-          <PropertyCard key={property._id} property={property} />
-        ))
+        <NoFavoritesMessage>You have no favorite properties yet.</NoFavoritesMessage>
       )}
     </FavoritesContainer>
   );
