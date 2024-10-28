@@ -151,16 +151,21 @@ const PropertyCard = ({ property }) => {
   const favoriteList = useSelector((state) => state.favorites.list);
   const isFavorite = favoriteList.some((fav) => fav._id === property?._id);
 
-  const toggleFavorite = () => {
+  const toggleFavorite = async () => {
     setFavoriteLoading(true);
-    if (isFavorite) {
-      dispatch(removeFromFavorites({ propertyId: property?._id }));
-      dispatch(openSnackbar({ message: "Removed from favorites!", severity: "success" }));
-    } else {
-      dispatch(addToFavorites({ propertyId: property?._id }));
-      dispatch(openSnackbar({ message: "Added to favorites!", severity: "success" }));
+    try {
+      if (isFavorite) {
+        await removeFromFavorites({ propertyId: property?._id });
+        dispatch(openSnackbar({ message: "Removed from favorites!", severity: "success" }));
+      } else {
+        await addToFavorites({ propertyId: property?._id });
+        dispatch(openSnackbar({ message: "Added to favorites!", severity: "success" }));
+      }
+    } catch (error) {
+      dispatch(openSnackbar({ message: "Error occurred!", severity: "error" }));
+    } finally {
+      setFavoriteLoading(false);
     }
-    setFavoriteLoading(false);
   };
 
   if (!property) {
