@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import PropertyCard from "../components/Cards/PropertyCard";
+import PropertyCard from "../componnents/Cards/PropertyCard";
 import styled from "styled-components";
 
 const FavoritesContainer = styled.div`
