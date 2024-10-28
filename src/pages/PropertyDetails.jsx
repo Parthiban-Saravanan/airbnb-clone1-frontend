@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import styled from "styled-components";
-import { getPropertyDetails, bookProperty } from "../api"; // Ensure this API function is correctly defined
-import Button from "../componnents/Button"; // Import the Button component
-import { useSelector } from "react-redux"; // Import useSelector to access the current user
+import { getPropertyDetails, bookProperty } from "../api";
+import Button from "../components/Button";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
   display: flex;
@@ -16,8 +16,8 @@ const Container = styled.div`
   height: 95vh;
   margin: 0 20px;
   background: ${({ theme }) => theme.bg};
-  border-radius: 12px 12px 0 0;
-  overflow-y: scroll;
+  border-radius: 12px;
+  overflow-y: auto;
 `;
 
 const Image = styled.img`
@@ -63,53 +63,54 @@ const Percent = styled.span`
 `;
 
 const PropertyDetails = () => {
-  const { id } = useParams(); // Get the property ID from the URL parameters
-  const navigate = useNavigate(); // Hook to programmatically navigate
-  const [property, setProperty] = useState(null); // State to hold property details
-  const [loading, setLoading] = useState(true); // Loading state
-  const [isBooked, setIsBooked] = useState(false); // State to track booking status
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [property, setProperty] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isBooked, setIsBooked] = useState(false);
 
-  // Access the current user's token from the Redux store
-  const currentUser  = useSelector((state) => state.user.currentUser );
-  const token = currentUser  ? currentUser.token : null; // Assuming the token is stored in the user object
+  // Check for user token from Redux
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const token = currentUser?.token;
 
   const getPropertyDetailsByID = async () => {
+    setLoading(true);
     try {
-      const response = await getPropertyDetails(id); // Fetch property details using the API
-      setProperty(response.data); // Set property details in state
+      const response = await getPropertyDetails(id);
+      setProperty(response.data);
     } catch (error) {
-      console.error("Failed to fetch property details:", error); // Log any errors
+      console.error("Failed to fetch property details:", error);
     } finally {
-      setLoading(false); // Set loading to false after fetching
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    getPropertyDetailsByID(); // Fetch property details when component mounts
-  }, [id]); // Dependency array includes id to refetch if it changes
+    getPropertyDetailsByID();
+  }, [id]);
 
   const handleBookNow = async () => {
     if (!token) {
-      alert("You need to be logged in to book a property."); // Alert if user is not logged in
+      alert("You need to be logged in to book a property.");
+      navigate("/login");
       return;
     }
-
     try {
-      await bookProperty(token, { propertyId: id }); // Call the bookProperty API with the property ID
-      setIsBooked(true); // Update booking status
-      alert("Property booked successfully!"); // Notify the user
+      await bookProperty(token, { propertyId: id });
+      setIsBooked(true);
+      alert("Property booked successfully!");
     } catch (error) {
-      console.error("Failed to book property:", error); // Log any errors
-      alert("Failed to book the property. Please try again."); // Notify the user of the error
+      console.error("Failed to book property:", error);
+      alert("Failed to book the property. Please try again.");
     }
   };
 
   if (loading) {
-    return <CircularProgress />; // Show loading indicator while fetching
+    return <CircularProgress />;
   }
 
   if (!property) {
-    return <div>No property found.</div>; // Handle case where property is not found
+    return <div>No property found.</div>;
   }
 
   return (
