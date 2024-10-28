@@ -20,7 +20,7 @@ const Container = styled.div`
   flex-direction: column;
   color: ${({ theme }) => theme.text_primary};
   overflow-x: hidden;
-  overflow-y: hidden;
+  overflow-y: auto;
   transition: all 0.2s ease;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)),
     url(${({ background }) => background});
