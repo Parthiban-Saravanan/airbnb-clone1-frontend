@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import styled from "styled-components";
 import { getPropertyDetails, bookProperty } from "../api";
-import Button from "../components/Button";
+import Button from "../componnents/Button";
 import { useSelector } from "react-redux";
 
 const Container = styled.div`
