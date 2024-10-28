@@ -71,7 +71,7 @@ const Percent = styled.div`
 `;
 
 const Favorites = () => {
-  const favorites = useSelector((state) => state.favorites.list);
+  const favorites = useSelector((state) => state.favorites.list); // Get the list of favorite properties from Redux store
 
   return (
     <FavoritesContainer>
@@ -81,14 +81,15 @@ const Favorites = () => {
       ) : (
         favorites.map((property) => (
           <PropertyCard key={property._id} property={property}>
-          <Title>{property?.title}</Title>
-          <Desc>{property?.desc}</Desc>
-          <Location>{property?.location}</Location>
-          <Price>
-            ${property?.price?.org}
-            <Strike>${property?.price?.mrp}</Strike>
-            <Percent>{property?.price?.off}% Off</Percent>
-          </Price>
+            {/* Displaying property details */}
+            <Title>{property?.title}</Title>
+            <Desc>{property?.desc}</Desc>
+            <Location>{property?.location}</Location>
+            <Price>
+              ${property?.price?.org}
+              <Strike>${property?.price?.mrp}</Strike>
+              <Percent>{property?.price?.off}% Off</Percent>
+            </Price>
           </PropertyCard>
         ))
       )}
