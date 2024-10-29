@@ -78,13 +78,13 @@ const BookButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   background-color: ${({ isBooked }) => (isBooked ? "green" : "blue")};
-  animation: ${({ isBooked }) =>
-    isBooked
+  animation: ${({ isShaking }) =>
+    isShaking
       ? css`
-          ${shakeAnimation} 0.3s ease;
+          ${shakeAnimation} 0.3s ease forwards;
         `
       : "none"};
-  animation-iteration-count: 2;
+  animation-iteration-count: ${({ isShaking }) => (isShaking ? 2 : 0)};
 
   &:hover {
     opacity: 0.8;
@@ -97,9 +97,10 @@ const PropertyDetails = () => {
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isBooked, setIsBooked] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
 
   // Check for user token from Redux
-  const currentUser = useSelector((state) => state.user.currentUser);
+  const currentUser  = useSelector((state) => state.user.currentUser );
   const token = currentUser?.token;
 
   const getPropertyDetailsByID = async () => {
@@ -128,6 +129,10 @@ const PropertyDetails = () => {
       try {
         await bookProperty(token, { propertyId: id });
         setIsBooked(true);
+        setIsShaking(true);
+        setTimeout(() => {
+          setIsShaking(false);
+        }, 600); // Duration of the shake animation
         alert("Property booked successfully!");
       } catch (error) {
         console.error("Failed to book property:", error);
@@ -157,7 +162,7 @@ const PropertyDetails = () => {
           <Span>${property.price.mrp}</Span>
           <Percent>{property.price.off}% Off</Percent>
         </Price>
-        <BookButton isBooked={isBooked} onClick={handleBookNow}>
+        <BookButton isBooked={isBooked} isShaking={isShaking} onClick={handleBookNow}>
           {isBooked ? "Booked" : "Book Now"}
         </BookButton>
       </Right>
