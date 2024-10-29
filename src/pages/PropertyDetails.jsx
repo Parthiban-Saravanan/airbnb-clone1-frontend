@@ -99,10 +99,6 @@ const PropertyDetails = () => {
   const [isBooked, setIsBooked] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
 
-  // Check for user token from Redux
-  const currentUser  = useSelector((state) => state.user.currentUser );
-  const token = currentUser?.token;
-
   const getPropertyDetailsByID = async () => {
     setLoading(true);
     try {
@@ -120,14 +116,9 @@ const PropertyDetails = () => {
   }, [id]);
 
   const handleBookNow = async () => {
-    if (!token) {
-      alert("You need to be logged in to book a property.");
-      navigate("/login");
-      return;
-    }
     if (!isBooked) {
       try {
-        await bookProperty(token, { propertyId: id });
+        await bookProperty({ propertyId: id }); // No token required
         setIsBooked(true);
         setIsShaking(true);
         setTimeout(() => {
