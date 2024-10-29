@@ -3,10 +3,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { getPropertyDetails, bookProperty } from "../api";
-import Button from "../componnents/Button";
 import { useSelector } from "react-redux";
+
+// Keyframes for the shake animation
+const shakeAnimation = keyframes`
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+`;
 
 const Container = styled.div`
   display: flex;
@@ -62,6 +69,28 @@ const Percent = styled.span`
   margin-left: 8px;
 `;
 
+const BookButton = styled.button`
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: ${({ isBooked }) => (isBooked ? "green" : "blue")};
+  animation: ${({ isBooked }) =>
+    isBooked
+      ? css`
+          ${shakeAnimation} 0.3s ease;
+        `
+      : "none"};
+  animation-iteration-count: 2;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 const PropertyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -95,13 +124,17 @@ const PropertyDetails = () => {
       navigate("/login");
       return;
     }
-    try {
-      await bookProperty(token, { propertyId: id });
-      setIsBooked(true);
-      alert("Property booked successfully!");
-    } catch (error) {
-      console.error("Failed to book property:", error);
-      alert("Failed to book the property. Please try again.");
+    if (!isBooked) {
+      try {
+        await bookProperty(token, { propertyId: id });
+        setIsBooked(true);
+        alert("Property booked successfully!");
+      } catch (error) {
+        console.error("Failed to book property:", error);
+        alert("Failed to book the property. Please try again.");
+      }
+    } else {
+      setIsBooked(false); // Reset button to "Book Now" state
     }
   };
 
@@ -124,11 +157,9 @@ const PropertyDetails = () => {
           <Span>${property.price.mrp}</Span>
           <Percent>{property.price.off}% Off</Percent>
         </Price>
-        <Button
-          text={isBooked ? "Booked" : "Book Now"}
-          onClick={handleBookNow}
-          disabled={isBooked}
-        />
+        <BookButton isBooked={isBooked} onClick={handleBookNow}>
+          {isBooked ? "Booked" : "Book Now"}
+        </BookButton>
       </Right>
     </Container>
   );
