@@ -92,7 +92,7 @@ const BookButton = styled.button`
 
 const PropertyDetails = () => {
   const { id } = useParams();
-  const dispatch = useDispatch(); // Initialize dispatch
+  const dispatch = useDispatch();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isBooked, setIsBooked] = useState(false);
@@ -105,31 +105,34 @@ const PropertyDetails = () => {
       setProperty(response.data);
     } catch (error) {
       console.error("Failed to fetch property details:", error);
+      dispatch(openSnackbar({ message: "Failed to fetch property details.", severity: "error" }));
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, dispatch]);
 
   useEffect(() => {
     getPropertyDetailsByID();
   }, [getPropertyDetailsByID]);
 
   const handleBookNow = async () => {
-    if (!isBooked) {
-      try {
-        await bookProperty({ propertyId: id }); // Pass the propertyId
+    try {
+      if (!isBooked) {
+        await bookProperty({ propertyId: id });
         setIsBooked(true);
         setIsShaking(true);
         dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
+        
         setTimeout(() => {
           setIsShaking(false);
         }, 600); // Duration of the shake animation
-      } catch (error) {
-        console.error("Failed to book property:", error);
-        dispatch(openSnackbar({ message: "Failed to book the property. Please try again.", severity: "error" }));
+      } else {
+        // If already booked, reset to "Book Now"
+        setIsBooked(false);
       }
-    } else {
-      setIsBooked(false); // Reset button to "Book Now" state
+    } catch (error) {
+      console.error("Failed to book property:", error);
+      dispatch(openSnackbar({ message: "Failed to book the property. Please try again.", severity: " error" }));
     }
   };
 
