@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import styled, { keyframes, css } from "styled-components";
 import { getPropertyDetails, bookProperty } from "../api";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { openSnackbar } from "../redux/reducers/snackbarSlice"; // Import snackbar action
 
 // Keyframes for the shake animation
 const shakeAnimation = keyframes`
@@ -93,13 +92,13 @@ const BookButton = styled.button`
 
 const PropertyDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const dispatch = useDispatch(); // Initialize dispatch
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isBooked, setIsBooked] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
 
-  const getPropertyDetailsByID = async () => {
+  const getPropertyDetailsByID = useCallback(async () => {
     setLoading(true);
     try {
       const response = await getPropertyDetails(id);
@@ -109,25 +108,25 @@ const PropertyDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     getPropertyDetailsByID();
-  }, [id]);
+  }, [getPropertyDetailsByID]);
 
   const handleBookNow = async () => {
     if (!isBooked) {
       try {
-        await bookProperty({ propertyId: id }); // No token required
+        await bookProperty({ propertyId: id }); // Pass the propertyId
         setIsBooked(true);
         setIsShaking(true);
+        dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
         setTimeout(() => {
           setIsShaking(false);
         }, 600); // Duration of the shake animation
-        alert("Property booked successfully!");
       } catch (error) {
         console.error("Failed to book property:", error);
-        alert("Failed to book the property. Please try again.");
+        dispatch(openSnackbar({ message: "Failed to book the property. Please try again.", severity: "error" }));
       }
     } else {
       setIsBooked(false); // Reset button to "Book Now" state
