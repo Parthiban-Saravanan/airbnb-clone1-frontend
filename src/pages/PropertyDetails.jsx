@@ -1,3 +1,4 @@
+// PropertyDetails.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
@@ -100,11 +101,10 @@ const PropertyDetails = () => {
   }, [getPropertyDetailsByID]);
 
   const handleBookNow = async () => {
+    const token = localStorage.getItem("authToken"); // Assuming the token is stored in local storage
     try {
-      await bookProperty({ propertyId: id });
+      await bookProperty(token, { propertyId: id });
       dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
-      
-      // Navigate to the Invoice page and pass the property details as state
       navigate("/invoice", { state: { property } });
     } catch (error) {
       console.error("Failed to book property:", error);
