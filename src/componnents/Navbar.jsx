@@ -99,7 +99,7 @@ const ButtonContainer = styled.div`
 
 const MobileIcon = styled.div`
   color: ${({ theme }) => theme.text_primary};
- display: none;
+  display: none;
 
   @media screen and (max-width: 768px) {
     display: flex;
@@ -187,6 +187,9 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
             <Navlink to="/blog" onClick={() => setIsOpen(!isOpen)}>
               Blogs
             </Navlink>
+            <Navlink to="/invoice" onClick={() => setIsOpen(!isOpen)}>
+              Invoice
+            </Navlink>
             {currentUser ? (
               <Button text="Logout" small onClick={handleLogout} />
             ) : (
@@ -208,6 +211,7 @@ const Navbar = ({ setOpenAuth, openAuth, currentUser }) => {
           <Navlink to="/properties">Place to stay</Navlink>
           <Navlink to="/contact">Contact</Navlink>
           <Navlink to="/blog">Blog</Navlink>
+          <Navlink to="/invoice">Invoice</Navlink>
         </NavItems>
 
         <MobileIcons>
