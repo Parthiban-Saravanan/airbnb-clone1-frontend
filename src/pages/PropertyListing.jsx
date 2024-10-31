@@ -47,20 +47,25 @@ const PropertyListing = () => {
   const [loading, setLoading] = useState(false);
   const [properties, setProperties] = useState([]);
   // eslint-disable-next-line no-unused-vars
-  const { location: loc, checkInDate, checkOutDate } = location.state;
-  const filter = `location=${loc}`;
+  const { location: loc, checkInDate, checkOutDate } = location.state || {};
+  const filter = loc ? `location=${loc}` : "";
 
   const getproperties = async () => {
     setLoading(true);
-    await getAllProperty(filter).then((res) => {
-      setProperties(res.data);
+    try {
+      const res = await getAllProperty(filter);
+      setProperties(res.data || []); // Fallback to empty array if no data
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+      setProperties([]); // Ensure properties is an empty array on error
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   useEffect(() => {
     getproperties();
-  }, []);
+  }, [filter]);
 
   return (
     <Container>
@@ -69,9 +74,13 @@ const PropertyListing = () => {
       ) : (
         <Property>
           <CardWrapper>
-            {properties.map((property) => (
-              <PropertyCard property={property} />
-            ))}
+            {properties.length > 0 ? (
+              properties.map((property) => (
+                <PropertyCard key={property._id} property={property} />
+              ))
+            ) : (
+              <p>No properties available.</p>
+            )}
           </CardWrapper>
         </Property>
       )}
