@@ -101,7 +101,7 @@ const PropertyDetails = () => {
 
   const handleBookNow = async () => {
     try {
-      const token = localStorage.getItem("token"); // Example: Replace with actual token storage method
+      const token = localStorage.getItem("token"); // Ensure the token is set correctly
       await bookProperty(token, { propertyId: id });
       dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
       
@@ -117,22 +117,36 @@ const PropertyDetails = () => {
       {loading ? (
         <CircularProgress />
       ) : (
-        property && (
+        property ? (
           <>
             <Image src={property.image} alt={property.title} />
             <Right>
               <Title>{property.title}</Title>
               <Desc>{property.description}</Desc>
-              {property.price && (
-                <Price>
-                  ${property.price.org}{" "}
-                  {property.price.mrp && <Span>${property.price.mrp}</Span>}
-                  {property.price.off && <Percent>+{property.price.off}% off</Percent>}
-                </Price>
-              )}
+              <Price>
+                ${property.price.org}{" "}
+                {property.price.mrp && <Span>${property.price.mrp}</Span>}
+                {property.price.off && <Percent>+{property.price.off}% off</Percent>}
+              </Price>
               <BookButton onClick={handleBookNow}>Book Now</BookButton>
+
+              {/* Additional details for better visibility */}
+              {property.address && <Desc><strong>Address:</strong> {property.address}</Desc>}
+              {property.amenities && property.amenities.length > 0 && (
+                <Desc>
+                  <strong>Amenities:</strong> {property.amenities.join(", ")}
+                </Desc>
+              )}
+              {property.checkIn && property.checkOut && (
+                <Desc>
+                  <strong>Check-In:</strong> {property.checkIn} <br />
+                  <strong>Check-Out:</strong> {property.checkOut}
+                </Desc>
+              )}
             </Right>
           </>
+        ) : (
+          <Desc>No property details found.</Desc>
         )
       )}
     </Container>
