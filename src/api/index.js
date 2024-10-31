@@ -8,7 +8,7 @@ const API = axios.create({
 // User signup function
 export const UserSignUp = async (data) => {
     try {
-        const response = await API.post("/user/signup", data);
+        const response = await API.post("/signup", data);
         return response.data;
     } catch (error) {
         console.error("Error during signup:", error);
@@ -19,7 +19,7 @@ export const UserSignUp = async (data) => {
 // User signin function
 export const UserSignIn = async (data) => {
     try {
-        const response = await API.post("/user/signin", data);
+        const response = await API.post("/signin", data);
         return response.data;
     } catch (error) {
         console.error("Error during signin:", error);
@@ -27,32 +27,10 @@ export const UserSignIn = async (data) => {
     }
 };
 
-// Fetch all properties with filter options
-export const getAllProperty = async (filter) => {
-    try {
-        const response = await API.get(`/property/get?${filter}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching properties:", error);
-        throw error;
-    }
-};
-
-// Get details of a specific property by ID
-export const getPropertyDetails = async (id) => {
-    try {
-        const response = await API.get(`/property/${id}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching property details:", error);
-        throw error;
-    }
-};
-
 // Retrieve user's favorite properties
-export const getFavourite = async (token) => {
+export const getFavorites = async (token) => {
     try {
-        const response = await API.get('/user/getFavorites/', {
+        const response = await API.get('/getFavorites', {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -63,9 +41,9 @@ export const getFavourite = async (token) => {
 };
 
 // Add a property to user's favorites
-export const addToFavourite = async (token, data) => {
+export const addToFavorites = async (token, data) => {
     try {
-        const response = await API.post('/user/addToFavorites/', data, {
+        const response = await API.post('/addToFavorites', data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -76,9 +54,9 @@ export const addToFavourite = async (token, data) => {
 };
 
 // Remove a property from user's favorites
-export const deleteFromFavourite = async (token, data) => {
+export const removeFromFavorites = async (token, data) => {
     try {
-        const response = await API.post('/user/removeFavorite', data, {
+        const response = await API.post('/removeFavorite', data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -91,7 +69,7 @@ export const deleteFromFavourite = async (token, data) => {
 // Book a property
 export const bookProperty = async (token, data) => {
     try {
-        const response = await API.post('/user/booking/', data, {
+        const response = await API.post('/booking', data, {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
@@ -102,14 +80,27 @@ export const bookProperty = async (token, data) => {
 };
 
 // Get booked properties for the user
-export const getBookedProperty = async (token) => {
+export const getBookedProperties = async (token) => {
     try {
-        const response = await API.get('/user/getBooking/', {
+        const response = await API.get('/getBookedProperties', {
             headers: { Authorization: `Bearer ${token}` },
         });
         return response.data;
     } catch (error) {
         console.error("Error fetching booked properties:", error);
+        throw error;
+    }
+};
+
+// Get details of a specific booking
+export const getBookingProperty = async (token) => {
+    try {
+        const response = await API.get('/getBookingProperty', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching booking details:", error);
         throw error;
     }
 };
