@@ -122,15 +122,11 @@ const PropertyDetails = () => {
             <Right>
               <Title>{property.title}</Title>
               <Desc>{property.description}</Desc>
-              {property.price && property.price.org ? ( // Check if price and org exist
-                <Price>
-                  ${property.price.org}{" "}
-                  {property.price.mrp && <Span>${property.price.mrp}</Span>}
-                  {property.price.off && <Percent>+{property.price.off}% off</Percent>}
-                </Price>
-              ) : (
-                <Price>No pricing information available.</Price> // Fallback if price is not available
-              )}
+              <Price>
+                ${property.price && property.price.org}{" "}
+                {property.price && property.price.mrp && <Span>${property.price.mrp}</Span>}
+                {property.price && property.price.off && <Percent>+{property.price.off}% off</Percent>}
+              </Price>
               <BookButton onClick={handleBookNow}>Book Now</BookButton>
 
               {/* Additional details for better visibility */}
