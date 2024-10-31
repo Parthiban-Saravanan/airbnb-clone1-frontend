@@ -9,8 +9,9 @@ import { useSelector } from "react-redux";
 import PropertyDetails from "./pages/PropertyDetails";
 import PropertyListing from "./pages/PropertyListing";
 import background from "./utils/Images/Background.jpg";
-import Contact from './pages/Contact'; // Import the Contact page
-import Blog from './pages/Blog'; // Import the Blog page
+import Contact from './pages/Contact';
+import Blog from './pages/Blog';
+import Invoice from "./pages/Invoice";
 import Favorites from './pages/Favorites';
 
 const Container = styled.div`
@@ -42,6 +43,7 @@ function App() {
             <Route path="/properties/:id" exact element={<PropertyDetails />} />
             <Route path="/contact" exact element={<Contact />} />
             <Route path="/blog" exact element={<Blog />} />
+            <Route path="/invoice" element={<Invoice />} />
             <Route path="/favorite" element={<Favorites />} />
           </Routes>
 
