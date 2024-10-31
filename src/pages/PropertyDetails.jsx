@@ -1,4 +1,3 @@
-// PropertyDetails.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
@@ -86,8 +85,8 @@ const PropertyDetails = () => {
   const getPropertyDetailsByID = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await getPropertyDetails(id);
-      setProperty(response.data);
+      const propertyData = await getPropertyDetails(id);
+      setProperty(propertyData);
     } catch (error) {
       console.error("Failed to fetch property details:", error);
       dispatch(openSnackbar({ message: "Failed to fetch property details.", severity: "error" }));
@@ -101,10 +100,11 @@ const PropertyDetails = () => {
   }, [getPropertyDetailsByID]);
 
   const handleBookNow = async () => {
-    const token = localStorage.getItem("authToken"); // Assuming the token is stored in local storage
     try {
+      const token = localStorage.getItem("token"); // Example: Replace with actual token storage method
       await bookProperty(token, { propertyId: id });
       dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
+      
       navigate("/invoice", { state: { property } });
     } catch (error) {
       console.error("Failed to book property:", error);
