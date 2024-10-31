@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import styled from "styled-components";
 import { getPropertyDetails, bookProperty } from "../api";
 import { useDispatch } from "react-redux";
-import { openSnackbar } from "../redux/reducers/snackbarSlice"; // Import snackbar action
+import { openSnackbar } from "../redux/reducers/snackbarSlice";
 
 const Container = styled.div`
   display: flex;
@@ -78,10 +78,9 @@ const BookButton = styled.button`
 const PropertyDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isBooked, setIsBooked] = useState(false);
 
   const getPropertyDetailsByID = useCallback(async () => {
     setLoading(true);
@@ -102,17 +101,11 @@ const PropertyDetails = () => {
 
   const handleBookNow = async () => {
     try {
-      if (!isBooked) {
-        await bookProperty({ propertyId: id });
-        setIsBooked(true);
-        dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
-
-        // Navigate to Invoice page after booking
-        navigate("/invoice", { state: { property } }); // Pass property details to Invoice page
-      } else {
-        // If already booked, reset to "Book Now"
-        setIsBooked(false);
-      }
+      await bookProperty({ propertyId: id });
+      dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
+      
+      // Navigate to the Invoice page and pass the property details as state
+      navigate("/invoice", { state: { property } });
     } catch (error) {
       console.error("Failed to book property:", error);
       dispatch(openSnackbar({ message: "Failed to book the property. Please try again.", severity: "error" }));
@@ -125,7 +118,7 @@ const PropertyDetails = () => {
         <CircularProgress />
       ) : (
         property && (
-          <div>
+          <>
             <Image src={property.image} alt={property.title} />
             <Right>
               <Title>{property.title}</Title>
@@ -133,21 +126,13 @@ const PropertyDetails = () => {
               {property.price && (
                 <Price>
                   ${property.price.org}{" "}
-                  {property.price.mrp && (
-                    <Span>
-                      ${property.price.mrp}
-                    </Span>
-                  )}
-                  {property.price.off && (
-                    <Percent>+{property.price.off}% off</Percent>
-                  )}
+                  {property.price.mrp && <Span>${property.price.mrp}</Span>}
+                  {property.price.off && <Percent>+{property.price.off}% off</Percent>}
                 </Price>
               )}
-              <BookButton onClick={handleBookNow}>
-                {isBooked ? "Booked" : "Book Now"}
-              </BookButton >
+              <BookButton onClick={handleBookNow}>Book Now</BookButton>
             </Right>
-          </div>
+          </>
         )
       )}
     </Container>
