@@ -128,7 +128,7 @@ const PropertyDetails = () => {
         navigate("/invoice");
 
         setTimeout(() => {
-          setIsShaking(false);
+          setIsShaking (false);
         }, 600); // Duration of the shake animation
       } else {
         // If already booked, reset to "Book Now"
@@ -151,17 +151,19 @@ const PropertyDetails = () => {
             <Right>
               <Title>{property.title}</Title>
               <Desc>{property.description}</Desc>
-              <Price>
-                ${property.price}{" "}
-                {property.discount && (
-                  <Span>
-                    ${property.price * (1 - property.discount / 100)}
-                  </Span>
-                )}
-                {property.discount && (
-                  <Percent>+{property.discount}% off</Percent>
-                )}
-              </Price>
+              {property.price && (
+                <Price>
+                  ${property.price.org}{" "}
+                  {property.price.mrp && (
+                    <Span>
+                      ${property.price.mrp}
+                    </Span>
+                  )}
+                  {property.price.off && (
+                    <Percent>+{property.price.off}% off</Percent>
+                  )}
+                </Price>
+              )}
               <BookButton isBooked={isBooked} isShaking={isShaking} onClick={handleBookNow}>
                 {isBooked ? "Booked" : "Book Now"}
               </BookButton>
