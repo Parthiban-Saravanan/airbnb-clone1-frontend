@@ -1,153 +1,140 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Button } from "@mui/material";
 import styled from "styled-components";
-import { getPropertyDetails, bookProperty } from "../api";
-import { useDispatch } from "react-redux";
-import { openSnackbar } from "../redux/reducers/snackbarSlice";
+import { getPropertyDetails } from "../api"; // Ensure this API function is correctly defined
 
 const Container = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 50px;
+  flex-direction: column;
   padding: 20px;
-  height: 95vh;
-  margin: 0 20px;
+  margin: 0 auto;
+  max-width: 1200px;
   background: ${({ theme }) => theme.bg};
   border-radius: 12px;
   overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 30px;
+  }
 `;
 
 const Image = styled.img`
-  width: 50%;
-  border-radius: 6px;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 12px;
   object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  @media (min-width: 768px) {
+    width: 50%;
+  }
 `;
 
 const Right = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  padding: 10px;
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
+  font-size: 1.8em;
   font-weight: 700;
   color: ${({ theme }) => theme.text_primary};
+  text-align: center;
+  padding-bottom: 5px;
+  border-bottom: 2px solid ${({ theme }) => theme.text_secondary};
 `;
 
 const Desc = styled.p`
-  font-size: 16px;
+  font-size: 1em;
+  line-height: 1.6;
   color: ${({ theme }) => theme.text_primary};
+  text-align: justify;
+  margin: 0 10px;
 `;
 
 const Price = styled.div`
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 1.5em;
+  font-weight: 600;
   color: ${({ theme }) => theme.text_primary};
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const Span = styled.span`
-  font-size: 16px;
+  font-size: 0.9em;
   color: ${({ theme }) => theme.text_secondary};
   text-decoration: line-through;
   margin-left: 8px;
 `;
 
 const Percent = styled.span`
-  font-size: 16px;
+  font-size: 0.9em;
   color: green;
+  font-weight: 500;
   margin-left: 8px;
-`;
-
-const BookButton = styled.button`
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  background-color: blue;
-
-  &:hover {
-    opacity: 0.8;
-  }
 `;
 
 const PropertyDetails = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const getPropertyDetailsByID = useCallback(async () => {
-    setLoading(true);
+  const getPropertyDetailsByID = async () => {
     try {
-      const propertyData = await getPropertyDetails(id);
-      setProperty(propertyData);
+      const response = await getPropertyDetails(id);
+      setProperty(response.data);
     } catch (error) {
       console.error("Failed to fetch property details:", error);
-      dispatch(openSnackbar({ message: "Failed to fetch property details.", severity: "error" }));
     } finally {
       setLoading(false);
     }
-  }, [id, dispatch]);
+  };
 
   useEffect(() => {
     getPropertyDetailsByID();
-  }, [getPropertyDetailsByID]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
-  const handleBookNow = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      await bookProperty(token, { propertyId: id });
-      dispatch(openSnackbar({ message: "Property booked successfully!", severity: "success" }));
-      navigate("/invoice", { state: { property } });
-    } catch (error) {
-      console.error("Failed to book property:", error);
-      dispatch(openSnackbar({ message: "Failed to book the property. Please try again.", severity: "error" }));
-    }
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (!property) {
+    return <div>No property found.</div>;
+  }
+
+  const handleBookNow = () => {
+    navigate("/invoice", { state: { property } });
   };
 
   return (
     <Container>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        property ? (
-          <>
-            <Image src={property.image} alt={property.title} />
-            <Right>
-              <Title>{property.title}</Title>
-              <Desc>{property.description}</Desc>
-              <Price>
-                ${property.price && property.price.org}{" "}
-                {property.price && property.price.mrp && <Span>${property.price.mrp}</Span>}
-                {property.price && property.price.off && <Percent>+{property.price.off}% off</Percent>}
-              </Price>
-              <BookButton onClick={handleBookNow}>Book Now</BookButton>
-
-              {/* Additional details for better visibility */}
-              {property.address && <Desc><strong>Address:</strong> {property.address}</Desc>}
-              {property.amenities && property.amenities.length > 0 && (
-                <Desc>
-                  <strong>Amenities:</strong> {property.amenities.join(", ")}
-                </Desc>
-              )}
-              {property.checkIn && property.checkOut && (
-                <Desc>
-                  <strong>Check-In:</strong> {property.checkIn} <br />
-                  <strong>Check-Out:</strong> {property.checkOut}
-                </Desc>
-              )}
-            </Right>
-          </>
-        ) : (
-          <Desc>No property details found.</Desc>
-        )
-      )}
+      <Image src={property.img} alt={property.title} />
+      <Right>
+        <Title>{property.title}</Title>
+        <Desc>{property.desc}</Desc>
+        <Price>
+          ${property.price.org}
+          <Span>${property.price.mrp}</Span>
+          <Percent>{property.price.off}% Off</Percent>
+        </Price>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleBookNow}
+          style={{ alignSelf: "center", marginTop: "20px" }}
+        >
+          Book Now
+        </Button>
+      </Right>
     </Container>
   );
 };
